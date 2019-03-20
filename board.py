@@ -8,8 +8,8 @@
 ################################
 import math
 
-MIN = -10000
-MAX = 10000
+MIN = -math.inf
+MAX = math.inf
 
 
 class Board:
@@ -85,34 +85,29 @@ class Board:
         return result
 
     def EvaluateArmy(self, color):
-        if self.win(color):
+        if self.win('W'):
             return MAX
-
-        opponentColor = 'W'
-        if color == 'W':
-            opponentColor = 'B'
-
-        if self.win(opponentColor):
+        if self.win('B'):
             return MIN
-        blackArmyPositions = self.travelOverBoard('B')
-        whiteArmyPositions = self.travelOverBoard('W')
 
         blackScore = 0
-        for piece in blackArmyPositions:
-            blackScore += (self.n_rows - 1) - piece[0]
-            if piece[0] < 2:
-                blackScore += (self.n_rows - 1) - piece[0]
+        # blackArmyPositions = self.travelOverBoard('B')
+        # for piece in blackArmyPositions:
+        #     blackScore += pow(5, (self.n_rows - 1) - piece[0])
+ 
         whiteScore = 0
-        for piece in whiteArmyPositions:
-            whiteScore += piece[0]
-            if piece[0] > 3:
-                whiteScore += piece[0]
+        # whiteArmyPositions = self.travelOverBoard('W')
+        # for piece in whiteArmyPositions:
+        #     whiteScore += pow(5, piece[0])
 
-        if color == 'B':
-            return blackScore - whiteScore
-
-        if color == 'W':
-            return whiteScore - blackScore
+        for i in range(self.n_rows):
+            for j in range(self.n_cols):
+                if self.board[i][j] == 'W':
+                    whiteScore += pow(5, i)
+                else:
+                    blackScore += pow(5, (self.n_rows - 1) - i)
+ 
+        return whiteScore - blackScore
         
 
     def changePieceLocation(self, color, from_, to_):

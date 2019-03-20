@@ -5,8 +5,9 @@ MAX = math.inf
 
 class AlphaBeta:
     @staticmethod
-    def calNextMove(tree):
+    def a_b_calNextMove(tree):
         decistionNode = tree.root.getDecisionChild()
+        print(tree.root.getUtility(), tree.root.getDecisionChild().getFromCell(), "->", tree.root.getDecisionChild().getToCell())
         return decistionNode.getFromCell(), decistionNode.getToCell()
 
 

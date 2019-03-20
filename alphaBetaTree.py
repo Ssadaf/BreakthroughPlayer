@@ -19,14 +19,19 @@ class Tree:
         return node
 
     def buildTree(self, color, opponentColor):
-        self.evaluateNode(self.root, True, color, opponentColor, MAX, MIN)
+        self.evaluateNode(self.root, True, color, opponentColor, MIN, MAX)
 
     def evaluateNode(self, node, maxTurn, color, opponentColor, alpha, beta):
         if node.board.win(color) or node.board.win(opponentColor) or (node.getHeight() == self.height):
             node.setEvaluationFunction(color)
-            return node.getUtility()
-        
+
+            # print("leaf", node.getUtility())
+            
+            return node.getUtility()    
+
         else:
+        # print("##############")
+
             decisionNode = None
             bestVal = 0
             if maxTurn:
@@ -73,4 +78,6 @@ class Tree:
                             break    
             node.setUtility(bestVal)
             node.setDecisionChild(decisionNode)
+            # print("final: ",bestVal)
+            # print("##############")
             return bestVal 
