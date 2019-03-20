@@ -20,22 +20,21 @@ class Tree:
 
     def buildTree(self, color, opponentColor):
         self.evaluateNode(self.root, True, color, opponentColor, MIN, MAX)
+    
 
     def evaluateNode(self, node, maxTurn, color, opponentColor, alpha, beta):
-        if node.board.win(color) or node.board.win(opponentColor) or (node.getHeight() == self.height):
-            node.setEvaluationFunction(color)
-
-            # print("leaf", node.getUtility())
-            
+        if node.winColor(color) or node.winColor(opponentColor) or (node.getHeight() == self.height):
+            if maxTurn == True:
+                node.a_b_setEvaluationFunction(color)
+            if maxTurn == False:
+                node.a_b_setEvaluationFunction(opponentColor)
             return node.getUtility()    
 
         else:
-        # print("##############")
-
             decisionNode = None
             bestVal = 0
+            unset = True
             if maxTurn:
-                bestVal = MIN
                 piecesFromCell, piecesToCell = node.board.getPiecesPossibleLocations(color)
                 shouldPrune = False
                 for i in range(len(piecesToCell)):
@@ -49,35 +48,36 @@ class Tree:
 
                         node.setChild(childNode)
                         value = self.evaluateNode(childNode, False, opponentColor, color, alpha, beta)
-                        if value > bestVal:
+                        if (value > bestVal) or unset :
+                            unset = False
                             bestVal = value
                             decisionNode = childNode
-                        alpha = max(alpha, bestVal)
+                            alpha = max(alpha, bestVal)
                         if beta <= alpha:
                             shouldPrune = True
                             break
             else:
-                bestVal = MAX
-                piecesFromCell, piecesToCell = node.board.getPiecesPossibleLocations(opponentColor)
+                piecesFromCell, piecesToCell = node.board.getPiecesPossibleLocations(color)
                 shouldPrune = False
                 for i in range(len(piecesToCell)):
+                    if shouldPrune:
+                        break
                     for j in range(len(piecesToCell[i])):
                         newBoard = copy.deepcopy(node.board)
-                        newBoard.changePieceLocation(opponentColor, piecesFromCell[i], piecesToCell[i][j])
+                        newBoard.changePieceLocation(color, piecesFromCell[i], piecesToCell[i][j])
 
                         childNode = self.makeNode(node.getHeight()+1, newBoard, piecesFromCell[i], piecesToCell[i][j])
 
                         node.setChild(childNode)
-                        value = self.evaluateNode(childNode, True, color, opponentColor, alpha, beta)
-                        if value < bestVal:
+                        value = self.evaluateNode(childNode, True, opponentColor, color, alpha, beta)
+                        if (value < bestVal) or unset:
+                            unset = False
                             bestVal = value
                             decisionNode = childNode
-                        beta = min(beta, bestVal)
+                            beta = min(beta, bestVal)
                         if beta <= alpha:
                             shouldPrune = True
                             break    
             node.setUtility(bestVal)
             node.setDecisionChild(decisionNode)
-            # print("final: ",bestVal)
-            # print("##############")
             return bestVal 

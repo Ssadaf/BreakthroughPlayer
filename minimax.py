@@ -25,18 +25,21 @@ class Minimax:
     @staticmethod
     def chooseDecistionChild(isMax, i, maxMinValue, tree):
         for j in range(len(tree.nodes[i])):
+            unset = True
             father = tree.nodes[i][j]
             maxMinUtility = maxMinValue
             decisionNode = None
             if len(father.children) > 0:
                 for child in father.children:
                     if not isMax:
-                        if child.utility < maxMinUtility:
+                        if (child.utility < maxMinUtility) or unset:
                             maxMinUtility = child.utility
+                            unset = False
                             decisionNode = child
                     if isMax:
-                        if child.utility > maxMinUtility:
+                        if (child.utility > maxMinUtility) or unset:
                             maxMinUtility = child.utility
+                            unset = False
                             decisionNode = child
                 father.setUtility(maxMinUtility)
                 father.setDecisionChild(decisionNode)

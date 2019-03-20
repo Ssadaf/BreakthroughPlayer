@@ -24,6 +24,7 @@ def play(white, black, board):
         board.changePieceLocation(turn, from_cell, to_cell)
         turn = switchTurn(turn)
         graphicalBoard.showBoard()
+        time.sleep(0.5)
        
 
 if __name__ == '__main__':
